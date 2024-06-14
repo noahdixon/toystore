@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Frontend server that handles query and buy requests from a client
  */
-public class Main {
+public class FrontendServiceServer {
 
     /**
      * Launches the server from the command line.
@@ -100,7 +100,7 @@ public class Main {
 
         // Set dynamic thread pool executor
         server.setExecutor(new ThreadPoolExecutor(0, maxThreads,
-                60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>()));
+                60L, TimeUnit.SECONDS, new SynchronousQueue<>()));
 
         // Start server
         System.out.println("Frontend service started, listening on " + port);

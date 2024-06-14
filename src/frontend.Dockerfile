@@ -13,7 +13,7 @@ FROM amazoncorretto:17-alpine-jdk
 COPY --from=buildstage /home/app/frontend-service/target/frontendservice-1.0-SNAPSHOT.jar /usr/local/lib/frontendservice.jar
 EXPOSE 1764
 # Cache with size 7
-ENTRYPOINT ["java","-cp","/usr/local/lib/frontendservice.jar","com.dixon.frontend.Main", "-cs", "7"]
+ENTRYPOINT ["java","-cp","/usr/local/lib/frontendservice.jar","com.dixon.frontend.FrontendServiceServer", "-cs", "7"]
 
 # Cache with size 0 (disabled cache)
-#ENTRYPOINT ["java","-cp","/usr/local/lib/frontendservice.jar","com.dixon.frontend.Main", "-cs", "0"]
+#ENTRYPOINT ["java","-cp","/usr/local/lib/frontendservice.jar","com.dixon.frontend.FrontendServiceServer", "-cs", "0"]
