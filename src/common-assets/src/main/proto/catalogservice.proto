@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.dixon";
+option java_outer_classname = "CatalogServiceProto";
+option objc_class_prefix = "CSP";
+
+package catalogservice;
+
+service CatalogService {
+  // Query's the catalog for item price and stock
+  rpc Query (CatalogQueryRequest) returns (CatalogQueryResponse) {}
+  // Changes the stock of items from the catalog
+  rpc ChangeStock (CatalogChangeRequest) returns (CatalogChangeResponse) {}
+}
+
+// The request message containing the name of an item (toy)
+message CatalogQueryRequest {
+  string name = 1;
+}
+
+// The response message containing the response from the catalog detailing item cost and stock
+message CatalogQueryResponse {
+  bool success = 1;
+  string name = 2;
+  double price = 3;
+  int32 quantity = 4;
+  string errorMessage = 5;
+}
+
+// The request message containing the name of an item (toy) and quantity to be increased or decreased
+// and a boolean flag indicating whether to increase the item stock or not
+message CatalogChangeRequest {
+  bool isIncrement = 1;
+  string name = 2;
+  int32 quantity = 3;
+}
+
+// The response message containing the response from the catalog whether the catalog change was successful
+message CatalogChangeResponse {
+  bool success = 1;
+  string errorMessage = 2;
+}

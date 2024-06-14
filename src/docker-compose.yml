@@ -1,0 +1,77 @@
+version: "3.9"
+services:
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend.Dockerfile
+    ports:
+      - "15623:1764"
+    environment:
+      - CATALOG_HOST=catalog
+      - DOCKER_RUN=true
+    depends_on:
+      - catalog
+      - order_1
+      - order_2
+      - order_3
+
+  catalog:
+    build:
+      context: .
+      dockerfile: catalogservice.Dockerfile
+    environment:
+      - DOCKER_RUN=true
+    volumes:
+      - ./data:/data
+
+  order_1:
+    build:
+      context: .
+      dockerfile: orderservice.Dockerfile
+    environment:
+      - CATALOG_HOST=catalog
+      - DOCKER_RUN=true
+      - SELF_ID=1
+    depends_on:
+      - catalog
+    volumes:
+      - ./data:/data
+    networks:
+      default:
+        aliases:
+          - order-service-1
+
+  order_2:
+    build:
+      context: .
+      dockerfile: orderservice.Dockerfile
+    environment:
+      - CATALOG_HOST=catalog
+      - DOCKER_RUN=true
+      - SELF_ID=2
+    depends_on:
+      - catalog
+    volumes:
+      - ./data:/data
+    networks:
+      default:
+        aliases:
+          - order-service-2
+
+  order_3:
+    build:
+      context: .
+      dockerfile: orderservice.Dockerfile
+    environment:
+      - CATALOG_HOST=catalog
+      - DOCKER_RUN=true
+      - SELF_ID=3
+    depends_on:
+      - catalog
+    volumes:
+      - ./data:/data
+    networks:
+      default:
+        aliases:
+          - order-service-3

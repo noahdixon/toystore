@@ -1,0 +1,53 @@
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+!src/**/src/main/**/target/
+!src/**/src/test/**/target/
+
+out/
+
+### IntelliJ IDEA ###
+.idea/modules.xml
+.idea/jarRepositories.xml
+.idea/compiler.xml
+.idea/libraries/
+.idea
+*.iws
+*.iml
+*.ipr
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
+
+### Data Files ###
+src/order-service/src/main/resources/orderlog.db
+src/order-service/src/main/resources/orderlog_1.db
+src/order-service/src/main/resources/orderlog_2.db
+src/order-service/src/main/resources/orderlog_3.db
+
+src/data/orderlog_1.db
+src/data/orderlog_2.db
+src/data/orderlog_3.db

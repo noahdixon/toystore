@@ -1,0 +1,99 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.dixon";
+option java_outer_classname = "OrderServiceProto";
+option objc_class_prefix = "OSP";
+
+package orderservice;
+
+service OrderService {
+  // Purchases some number of items from the catalog
+  rpc Buy (OrderBuyRequest) returns (OrderBuyResponse) {}
+
+  // Query the already placed order from the order service
+  rpc QueryOrderNumber (OrderQueryRequest) returns (OrderQueryResponse) {}
+
+  // Ping the server to see if it is online
+  rpc CheckHealth (HealthRequest) returns (HealthResponse) {}
+
+  // Inform the server of the leader address
+  rpc AssignLeader (LeaderAssignment) returns (LeaderAssignmentResponse) {}
+
+  // Fetch all orders after the given order number
+  rpc FetchAllOrdersFrom (FetchAllOrdersFromRequest) returns (FetchAllOrdersResponse) {}
+
+  // Add orders from leader into the DB
+  rpc AcceptOrdersFromLeader (AcceptOrdersRequest) returns (AcceptOrdersResponse) {}
+}
+
+// The request message containing the name of an item (toy)
+message OrderBuyRequest {
+  string name = 1;
+  int32 quantity = 2;
+}
+
+// The response message containing the response from the catalog detailing item cost and stock
+message OrderBuyResponse {
+  bool success = 1;
+  int32 orderNumber = 2;
+  string errorMessage = 3;
+}
+
+// The request message containing the order number
+message OrderQueryRequest {
+  int32 orderNumber = 1;
+}
+
+// The Order Record containing product name, quantity and order number
+message OrderRecord {
+  string name = 1;
+  int32 quantity = 2;
+  int32 orderNumber = 3;
+}
+
+// The response message containing the response from the order servive detailing item cost and stock
+message OrderQueryResponse {
+  bool success = 1;
+  OrderRecord order = 2;
+  string errorMessage = 3;
+}
+
+// Ping request and response objects
+message HealthRequest {
+  string message = 1;
+}
+message HealthResponse {
+  string message = 1;
+}
+
+message LeaderAssignment {
+  int32 id = 1;
+  string host = 2;
+  int32 port = 3;
+}
+
+message LeaderAssignmentResponse {
+  string message = 1;
+}
+
+// The request message containing the order number from which the server should respond with
+message FetchAllOrdersFromRequest {
+  int32 afterOrderNumber = 1;
+  int32 requesterId = 2;
+}
+
+// The response message of the order records after the given order number
+message FetchAllOrdersResponse {
+  int32 afterOrderNumber = 1;
+  repeated OrderRecord orders = 2;
+}
+
+message AcceptOrdersRequest {
+  OrderRecord order = 1;
+  int32 requesterId = 2;
+}
+
+message AcceptOrdersResponse {
+  bool success = 1;
+}
