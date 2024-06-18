@@ -35,18 +35,17 @@ rm -rf "$out_directory"
 mkdir -p "$out_directory"
 
 # Start clients sequentially for each probability number
-for ((step=0; step<=10; step=step+2)); do
-
-    # Calculate probability based on step
-    probability=$(awk "BEGIN {printf \"%.2f\", $step / 10}")
+for ((clients=1; clients<=5; clients++)); do
 
     # Create the folder with inside the 'out' directory
-    output_folder="$out_directory/out_step_${step}"
+    output_folder="$out_directory/clients_${clients}"
 
     mkdir -p "$output_folder"
 
-    for ((client_i=1; client_i<=5; client_i++)); do
-        java -cp "./client/target/client-1.0-SNAPSHOT.jar" com.dixon.client.Main ${req:+-req} "$req" ${server_address:+-ser} "$server_address" ${port:+-p} "$port" -pr "$probability" -l > "$output_folder"/latencies_${client_i}.txt &
+    echo "Running $clients concurrent clients"
+
+    for ((client_i=1; client_i<=clients; client_i++)); do
+        java -cp "./client/target/client-1.0-SNAPSHOT.jar" com.dixon.client.Main ${server_address:+-ser "$server_address"} ${port:+-p "$port"} ${req:+-req "$req"}  -pr 1 -l > "$output_folder"/latencies_${client_i}.txt &
     done
 
     # Wait for background processes to complete in this for loop
@@ -56,4 +55,4 @@ done
 # Waiting for any remaining processes to complete
 wait
 
-echo "All clients have finished running"
+echo "All clients finished running"

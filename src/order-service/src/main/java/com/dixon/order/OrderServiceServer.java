@@ -230,8 +230,7 @@ public class OrderServiceServer {
         options.addOption("m", "maxThreads", true, "maximum number of threads in dynamic pool");
         options.addOption("ch", "catalogHost", true, "catalog service server address");
         options.addOption("cp", "catalogPort", true, "catalog service server port");
-        options.addOption("f", "filePath", true, "file path to read the product catalog information");
-        options.addOption("t", "updateTime", true, "time in seconds to update the db file on disk");
+        options.addOption("f", "filePath", true, "file path to the order log db file");
         options.addOption("te", "test", false, "testing mode activated");
 
         CommandLineParser parser = new DefaultParser();
@@ -248,7 +247,6 @@ public class OrderServiceServer {
         int maxThreads = Integer.parseInt(cmd.getOptionValue("maxThreads", "50"));
         String catalogHost = cmd.getOptionValue("catalogHost", "0.0.0.0");
         int catalogPort = Integer.parseInt(cmd.getOptionValue("catalogPort", "1765"));
-        int updateTime = Integer.parseInt(cmd.getOptionValue("updateTime", "600"));
         testMode = cmd.hasOption("te");
 
         // Check if this is being run in docker by reading the DOCKER_RUN env variable

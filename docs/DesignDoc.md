@@ -1,8 +1,8 @@
-# Fault Tolerant Tiered Microservices-Based Toy Store
+# Multi-Tiered, Microservice-Based Toy StoreFault Tolerant Tiered Microservices-Based Toy Store
 
 ## Introduction
 
-This project implements a web application backend for an online
+This project implements a web application backend for a fictional
 toy store using a multi-tier architecture 
 with containerized microservices that communicate via gRPC. It also includes a simulated 
 client program that sends requests to the backend via an HTTP-based REST API.

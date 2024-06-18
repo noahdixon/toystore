@@ -15,10 +15,10 @@ captured in a screenshot, placed in the outputs directory, and shown below.
 the catalog service, and the frontend service.
 - Output: the outputs below show that order service 3 is elected as the leader since
 it has the highest id, and that all three order services are aware of this.
-- order service id 3: ![](test_snips/1_order_3.png)
-- order service id 2: ![](test_snips/1_order_2.png)
-- order service id 1: ![](test_snips/1_order_1.png)
-- frontend service: ![](test_snips/1_frontend.png)
+- order service id 3: ![](../test_snips/1_order_3.png)
+- order service id 2: ![](../test_snips/1_order_2.png)
+- order service id 1: ![](../test_snips/1_order_1.png)
+- frontend service: ![](../test_snips/1_frontend.png)
 
 2. Test query, buy, and get order functionality
 - Client configuration: pr = 0.5 to test that buys are sent with probability 0.5. r = 10 for 10 requests
@@ -29,7 +29,7 @@ is servicing buy requests and propagating the data to the replica services. Also
 the output from the frontend server and the catalog service shows that the 
 LRU cache is being updated and used to respond quickly to query requests.
 
-- client: ![](test_snips/2_client.png)
+- client: ![](../test_snips/2_client.png)
 - frontend service: ![](test_snips/2_frontend(1).png)
     ![](test_snips/2_frontend(2).png)
     ![](test_snips/2_frontend(3).png)

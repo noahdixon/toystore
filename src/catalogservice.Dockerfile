@@ -15,5 +15,6 @@ EXPOSE 1765
 
 # Cache enabled to send invalidation requests
 ENTRYPOINT ["java","-cp","/usr/local/lib/catalogservice.jar","com.dixon.catalog.CatalogServiceServer", "-ec"]
+
 # Cache disabled
 # ENTRYPOINT ["java","-cp","/usr/local/lib/catalogservice.jar","com.dixon.catalog.CatalogServiceServer"]

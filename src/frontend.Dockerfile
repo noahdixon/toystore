@@ -16,4 +16,4 @@ EXPOSE 1764
 ENTRYPOINT ["java","-cp","/usr/local/lib/frontendservice.jar","com.dixon.frontend.FrontendServiceServer", "-cs", "7"]
 
 # Cache with size 0 (disabled cache)
-#ENTRYPOINT ["java","-cp","/usr/local/lib/frontendservice.jar","com.dixon.frontend.FrontendServiceServer", "-cs", "0"]
+# ENTRYPOINT ["java","-cp","/usr/local/lib/frontendservice.jar","com.dixon.frontend.FrontendServiceServer", "-cs", "0"]

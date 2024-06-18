@@ -103,8 +103,8 @@ public class CatalogServiceServer {
         Options options = new Options();
         options.addOption("p", "port", true, "port");
         options.addOption("m", "maxThreads", true, "maximum number of threads in dynamic pool");
-        options.addOption("f", "filePath", true, "file path to read the product catalog information");
-        options.addOption("ut", "updateTime", true, "frequency in seconds of db writes to disk disk");
+        options.addOption("f", "filePath", true, "file path to the inventory.csv file");
+        options.addOption("ut", "updateTime", true, "frequency in seconds of db writes to disk");
         options.addOption("rt", "restockTime", true, "frequency in seconds of restocks");
         options.addOption("te", "test", false, "testing mode activated");
         options.addOption("fs", "frontendServer", true, "frontend server address");
