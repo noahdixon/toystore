@@ -1,4 +1,4 @@
-package com.dixon.frontend;
+package com.dixon.gateway;
 
 import lombok.Getter;
 import lombok.Setter;

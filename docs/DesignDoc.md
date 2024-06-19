@@ -54,9 +54,9 @@ for a specific order made on the store (specified by a unique order number).
 The store is implemented as three containerized microservices which communicate with each other
 via gRPC to service incoming client requests. These microservices are: 
 
-1. **Frontend Service**: This service exposes an HTTP REST API for clients to make requests.
+1. **Gateway Service**: This service exposes an HTTP REST API for clients to make requests.
 It forwards these requests to the appropriate handler service, processes the responses from the handler service, 
-and sends a response back to the client. The Frontend
+and sends a response back to the client. The Gateway
 Service also maintains a cache of recently made queries and responses to improve latency.
 
 
@@ -67,10 +67,10 @@ by the order service.
 
 3. **Order Service**: Handles product purchases (client action #2), maintains a log of completed orders, and handles 
 order queries (client action #3). The Order Service is made fault tolerant via replication. One Order Service instance
-is elected to serve as the leader by the Frontend Service, and this leader propagates changes in its order log
+is elected to serve as the leader by the Gateway Service, and this leader propagates changes in its order log
 to the other Order Service replicas.
 
-A simulated client code sends various types of requests to the Frontend Service, and
+A simulated client code sends various types of requests to the Gateway Service, and
 multiple simulated clients may be started concurrently to observe the store's ability to handle concurrent requests.
 The diagram below provides a high level overview of the client, the microservices, and their communication 
 patterns:
@@ -87,8 +87,8 @@ Python is then used to read latency data from these tests and generate plots usi
 
 ## Design Details 
 
-### Frontend Server
-The Main class of the frontend server uses Java's HTTPServer to listen for incoming 
+### Gateway Service
+The Main class of the Gateway server uses Java's HTTPServer to listen for incoming 
 HTTP requests from the client on a specified port. It uses a ThreadPoolExecutor to 
 instantiate java's built-in thread pool to handle concurrent requests. It also instantiates three 
 separate HttpHandlers and maps them to uri's for handling client requests:
@@ -100,7 +100,7 @@ Specifically, these handlers handle HTTP GET requests of the form:
 When a request comes in, the handler extracts the product name from the client URI, constructs 
 a CatalogQueryRequest object, and calls
 the catalog stub's `query` method on this object (following the interface defined by the
-catalog service in the catalogservice.proto file). On response from the catalog, it either returns
+catalog service in the `catalogservice.proto` file). On response from the catalog, it either returns
 the data for the specified product to the client via HttpResponse in the JSON form specified below:
 
    ```json
@@ -146,7 +146,7 @@ the leader election mechanism is detailed in the **Leader Election** section bel
    It does so by extracting the product name and quantity 
    from the client request body, constructing a OrderBuyRequest object, 
    and calling the leader Order Service stub's `buy` method on this object (following the interface defined by the
-   order service in the orderservice.proto file). On response from the Order Service, it will then either return the order
+   order service in the `orderservice.proto` file). On response from the Order Service, it will then either return the order
    number to the client via HttpResponse in the JSON form specified below:
 
    ```json
@@ -181,7 +181,7 @@ contains the correct product stock.
 
 #### LRU Cache
 
-As stated above, the Frontend Service contains a custom `LRUCache` which employs the 
+As stated above, the Gateway Service contains a custom `LRUCache` which employs the 
 Least Recently Used eviction policy to increase product query latency. The cache is implemented using java's 
 built-in HashMap for constant time lookups and a custom queue data structure, `LRUQueue`, to maintain the
 least recently used order. The queue is implemented as a doubly linked-list of `LRUNode`'s, which
@@ -193,7 +193,7 @@ The cache has a configurable maximum size, and implements 3 core methods:
 and upon a cache hit such node gets moved to the front of the queue. 
 
 
-2. The `put` method adds or updates a node in the cache any time the Frontend Service receives a valid product query response
+2. The `put` method adds or updates a node in the cache any time the Gateway Service receives a valid product query response
 from the Catalog Service. If a node already exists for a product, that node will be updated and moved
 to the front of the queue. Otherwise, a new node will be created, added to the HashMap and the front of the queue. 
 If the cache is full when a new node is added, the last node in the 
@@ -202,21 +202,21 @@ queue will be evicted as it is the least recently accessed node.
 
 3. The `invalidate` method removes a node from the queue when the stock of a product
 in the store changes. This method is called when the Catalog Service sends an invalidation 
-request to the Frontend Service, notifying it that any cache entry associated with some product
+request to the Gateway Service, notifying it that any cache entry associated with some product
 has become invalid.
 
 Each of these methods is synchronized to avoid race conditions since the cache is shared across 
 concurrently executing handler threads. The cache can also be enabled or disabled on startup 
-of the Frontend Service using a command line argument.
+of the Gateway Service using a command line argument.
 
 #### Leader Election
 
-The Order Service is made fault tolerant via replication, and the Frontend Service is tasked 
+The Order Service is made fault tolerant via replication, and the Gateway Service is tasked 
 with electing a leader Order Service instance (node) on startup or when the previous leader fails.
-In order to do this, the Frontend Service keeps a list of all Order Service nodes, each of
+In order to do this, the Gateway Service keeps a list of all Order Service nodes, each of
 which has a unique ID, host address, and port number. This list is generated by 
 the `OrderServiceNodesReader` class, which reads the Order Service nodes information from
-configuration files in the resources directory on startup. The task of electing a leader
+configuration files in the `resources` directory on startup. The task of electing a leader
 is handled by the `OrdersHandler`'s `electLeader` method. This
 method iterates over the Order Service nodes, starting from the node with
 the highest ID and continuing in descending order. It obtains a gRPC stub to each service
@@ -227,19 +227,19 @@ to be the leader. Finally, the `electLeader` method notifies the other online no
 of the new leader by calling the `assignLeader` method on their stubs and passing a
 `LeaderAssignment` object which contains the new leader ID. Again, the `electLeader` method
 is triggered on startup or whenever the leader node stops responding to gRPC calls
-from the Frontend Service. This means as long as at least one Order Service node is
+from the Gateway Service. This means as long as at least one Order Service node is
 online, the application may continue to function normally.
 
 ### Catalog Service
 The Catalog Service implements a gRPC server in order to expose an interface for querying
-products to the Frontend Service, and an interface for purchasing products to the Order Service.
-These interfaces are defined as services in the catalogservice.proto file.
-Similar to the Frontend Service, a `ThreadPoolExecutor` is used to generate a 
+products to the Gateway Service, and an interface for purchasing products to the Order Service.
+These interfaces are defined as services in the `catalogservice.proto` file.
+Similar to the Gateway Service, a `ThreadPoolExecutor` is used to generate a 
 thread pool for handling concurrent RPCs. The interface methods are:
 
 1. The `query` method queries the product catalog for a specific product. It is called by the
-Frontend Service to handle client product query requests. After checking the `ProductCatalog`,
-the method returns to the Frontend Service the name, price, and quantity in stock of the product.
+Gateway Service to handle client product query requests. After checking the `ProductCatalog`,
+the method returns to the Gateway Service the name, price, and quantity in stock of the product.
 
 
 2. The `changeStock` method attempts to decrement the stock of an item in the `ProductCatalog`
@@ -266,21 +266,21 @@ The time between writes can be configured via the -ut command line argument on s
 
 ### Order Service
 The Order Service implements a gRPC server in order to expose several interfaces defined in the 
-orderservice.proto file to the Frontend Service and to other Order Service instances (nodes). 
-Similar to the frontend server, a ThreadPoolExecutor is used to generate a
+`orderservice.proto` file to the Gateway Service and to other Order Service instances (nodes). 
+Similar to the Gateway server, a ThreadPoolExecutor is used to generate a
 built-in thread pool for handling concurrent RPC's. The first two interface methods are for servicing client
-requests forwarded from the Frontend Service:
+requests forwarded from the Gateway Service:
 
 1. The `buy` method attempts to purchase a product from the catalog by calling `changeStock` on a gRPC stub to 
 the Catalog Service. If the call is successful, an `OrderNumberGenerator` generates an order number for the
 order in a synchronized manner so that each order number is unique. The order information is then added
 to the Order Service's log, which is implemented using an SQLite database file. The order is also
 propagated to other online Order Service nodes using the `AcceptOrdersResponse` interface method. Finally,
-the order number is returned to the Frontend Service.
+the order number is returned to the Gateway Service.
 
 
 2. The `queryOrderNumber` method searches the order log for an order based on its order number, and if found
-returns the data associated with this order to the Frontend Service (product name, quantity, and order number).
+returns the data associated with this order to the Gateway Service (product name, quantity, and order number).
 
 #### Replication
 
@@ -293,7 +293,7 @@ node has a `ReplicaManager` which tracks who the leader node is and which nodes 
 
 
 4. The `checkHealth` method is used to check if this Order Service node is currently online. This method
-is called by the Frontend Service during leader election, so that it can elect the online node with 
+is called by the Gateway Service during leader election, so that it can elect the online node with 
 the highest ID.
 
 
@@ -313,7 +313,7 @@ Java's `Stream.distinct()` is used to ensure that each order it receives is only
 
 ### Client
 The simulated client uses Java's HTTP interface to construct HTTP GET requests for random products from the
-catalog in the format `GET /products/<product_name>`. It sends these requests to the Frontend
+catalog in the format `GET /products/<product_name>`. It sends these requests to the Gateway
 Service at a specified hostname and port, and blocks for a response.
 Upon a successful response, with some probability the client constructs
 and sends a POST request to attempt to purchase the same product in a random quantity between 1-5 (or 1-quantity in
@@ -337,7 +337,7 @@ been sent (specified by the -r argument). Finally, after the client has finished
 requests, it checks whether the Store has kept the correct order information in its database.
 In order to do this, it iterates over each `SentOrder` object it has stored, and sends an order query
 request for each order number. These requests are of the format `Get /orders/<order number>`
-As responses come back from the Frontend Server, the client checks that the order data in each response matches
+As responses come back from the Gateway Server, the client checks that the order data in each response matches
 the order data stored in the corresponding `SentOrder` object. If one does not, the client prints the discrepancy
 and terminates.
 
@@ -350,7 +350,7 @@ In order to examine the latency effects of increasing client loads,
 
 Java's
 System.nanoTime method is used to capture the time in nanoseconds immediately before and after 
-client requests are made to the frontend server. The time for all requests is averaged and optionally
+client requests are made to the Gateway server. The time for all requests is averaged and optionally
 printed to the standard output in milliseconds at the end of each client run. The run_latencies.sh file is 
 used to run multiple concurrent client processes. The file accepts command 
 line arguments for which part to run, the server host name, server port number, number of requests per client
@@ -363,7 +363,7 @@ and produce plots showing the average latency per request for both query and buy
 ## Build Tools and Packaging
 
 Maven is used as a build, packaging, and dependency manager. The project is set up with _____ as a 
-parent pom and the three microservices (Frontend, Catalog and Order Service) and Client as child pom modules. 
+parent pom and the three microservices (Gateway, Catalog and Order Service) and Client as child pom modules. 
 Maven build compiles and packages all child modules first for the parent, and then packages into the Jar.
 The maven shade plugin is used to package the dependencies into a single fat jar so that the classpath does not 
 have to contain all the required dependencies. We used apache commons cli for command line arguments and gRPC 
@@ -375,11 +375,11 @@ as dependencies for the project. The Jar will be able to run with minimum of JRE
 
 A multi-stage build is used to generate a Docker image for each individual microservice. 
 Initially, during the build phase, the maven:3.8.5-openjdk-17-slim image is used as the base image. 
-The source code for all services (Frontend, Catalog, and Order Service) is copied into the image, 
+The source code for all services (Gateway, Catalog, and Order Service) is copied into the image, 
 and the application is compiled into JAR files.
 Next, during the package stage, the amazoncorretto:17-alpine-jdk image is used as the base. 
 The JAR file specific to whichever service's image is being generated is copied into the image.
-A port is exposed for communication with other services (and the client in the case of the Frontend Service), 
+A port is exposed for communication with other services (and the client in the case of the Gateway Service), 
 and an entry point is defined for the service to ensure that the service starts executing when the container starts.
 
 ### Docker Compose
@@ -388,9 +388,9 @@ is used to orchestrate the deployment of the three microservices. Network aliase
 for the services in the default docker network, and environment variables are used to pass the hostname aliases of
 other services to the services (for example passing the hostname "catalog" for the Catalog Service to the Order Service
 instances). Dependencies ensure that the services start in the correct order (Catalog first, then Order Services, 
-then Frontend Service). The Catalog and Order Services share the host machines' `/data` directory for storing the
+then Gateway Service). The Catalog and Order Services share the host machines' `/data` directory for storing the
 inventory.csv and order log database files.
-The Frontend service is exposed on the host machine's port 15623 for receiving client requests.
+The Gateway service is exposed on the host machine's port 15623 for receiving client requests.
 
 ## References Used
 1. Followed https://github.com/grpc/grpc-java for pom.xml changes to enable gRPC to be built using maven.

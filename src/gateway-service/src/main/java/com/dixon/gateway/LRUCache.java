@@ -1,4 +1,4 @@
-package com.dixon.frontend;
+package com.dixon.gateway;
 
 import java.util.HashMap;
 import java.util.Map;

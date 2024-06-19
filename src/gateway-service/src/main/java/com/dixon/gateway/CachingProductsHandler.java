@@ -1,4 +1,4 @@
-package com.dixon.frontend;
+package com.dixon.gateway;
 
 import com.dixon.CatalogQueryRequest;
 import com.dixon.CatalogQueryResponse;
@@ -22,7 +22,7 @@ public class CachingProductsHandler extends ProductsHandler {
      * Instantiates a CachingProductsHandler instance, obtaining a gRPC stub to the catalog service at host:port
      * @param host The host address of the catalog service
      * @param port The port address of the catalog service
-     * @param cache The frontend server LRUCache
+     * @param cache The gateway server LRUCache
      * @param testMode Indicates whether the handler should show testing mode output
      */
     public CachingProductsHandler(String host, int port, LRUCache cache, boolean testMode) {

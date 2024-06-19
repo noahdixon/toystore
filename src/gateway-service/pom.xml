@@ -8,7 +8,7 @@
     </parent>
 
     <groupId>com.dixon</groupId>
-    <artifactId>frontendservice</artifactId>
+    <artifactId>gatewayservice</artifactId>
     <packaging>jar</packaging>
 
     <build>
@@ -27,10 +27,10 @@
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.dixon.frontend</mainClass>
+                                    <mainClass>com.dixon.gateway</mainClass>
                                     <manifestEntries>
                                         <Implementation-Version>${project.version}</Implementation-Version>
-                                        <Main-Class>com.dixon.frontend</Main-Class>
+                                        <Main-Class>com.dixon.gateway</Main-Class>
                                     </manifestEntries>
                                 </transformer>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />

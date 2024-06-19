@@ -1,4 +1,4 @@
-package com.dixon.frontend;
+package com.dixon.gateway;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -24,13 +24,13 @@ public class InvalidateHandler implements HttpHandler {
     private final ObjectMapper objectMapper;
 
     /**
-     * The frontend service LRU cache
+     * The gateway service LRU cache
      */
     private final LRUCache cache;
 
     /**
      * Instantiates an InvalidateHandler
-     * @param cache the frontend service LRU cache
+     * @param cache the gateway service LRU cache
      */
     public InvalidateHandler(LRUCache cache) {
         super();

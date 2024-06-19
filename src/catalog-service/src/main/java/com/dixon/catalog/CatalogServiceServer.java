@@ -14,7 +14,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Server that handles query requests from a frontend server,
+ * Server that handles query requests from a gateway server,
  * and buy requests from an order service server
  */
 public class CatalogServiceServer {
@@ -107,8 +107,8 @@ public class CatalogServiceServer {
         options.addOption("ut", "updateTime", true, "frequency in seconds of db writes to disk");
         options.addOption("rt", "restockTime", true, "frequency in seconds of restocks");
         options.addOption("te", "test", false, "testing mode activated");
-        options.addOption("fs", "frontendServer", true, "frontend server address");
-        options.addOption("fp", "frontendPort", true, "frontend server port");
+        options.addOption("fs", "gatewayServer", true, "gateway server address");
+        options.addOption("fp", "gatewayPort", true, "gateway server port");
         options.addOption("ec", "enableCache", false, "enables sending cache invalidation");
 
         CommandLineParser parser = new DefaultParser();
@@ -125,13 +125,13 @@ public class CatalogServiceServer {
         int maxThreads = Integer.parseInt(cmd.getOptionValue("maxThreads", "50"));
         int updateTime = Integer.parseInt(cmd.getOptionValue("updateTime", "600"));
         int restockTime = Integer.parseInt(cmd.getOptionValue("restockTime", "10"));
-        InetAddress frontendServerName = InetAddress.getByName(cmd.getOptionValue("frontendServer", "localhost"));
-        int frontendPort = Integer.parseInt(cmd.getOptionValue("frontendPort", "1764"));
+        InetAddress gatewayServerName = InetAddress.getByName(cmd.getOptionValue("gatewayServer", "localhost"));
+        int gatewayPort = Integer.parseInt(cmd.getOptionValue("gatewayPort", "1764"));
         testMode = cmd.hasOption("te");
         boolean isCacheEnabled = cmd.hasOption("ec");
 
-        // Define frontend address
-        Address frontendAddress = Address.builder().host(frontendServerName.getHostName()).port(frontendPort).build();
+        // Define gateway address
+        Address gatewayAddress = Address.builder().host(gatewayServerName.getHostName()).port(gatewayPort).build();
 
         // Check if this is being run in docker by reading the DOCKER_RUN env variable
         boolean dockerRun = false;
@@ -143,13 +143,13 @@ public class CatalogServiceServer {
         // Decide the file to read, based on location of the program run
         String catalogFilePath;
         if(!dockerRun) {
-            catalogFilePath = cmd.getOptionValue("filePath", "src/catalog-service/src/main/resources/inventory.csv");
+            catalogFilePath = cmd.getOptionValue("filePath", "catalog-service/src/main/resources/inventory.csv");
         } else {
             catalogFilePath = cmd.getOptionValue("filePath", "/data/inventory.csv");
         }
 
         // Initialize the product catalog
-        productCatalog = new ProductCatalog(catalogFilePath, updateTime, restockTime, frontendAddress, isCacheEnabled);
+        productCatalog = new ProductCatalog(catalogFilePath, updateTime, restockTime, gatewayAddress, isCacheEnabled);
 
         // Create and start server
         final CatalogServiceServer server = new CatalogServiceServer();

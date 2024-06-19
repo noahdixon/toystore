@@ -58,12 +58,12 @@ public class ProductCatalog {
     private final Lock writeLock = readWriteLock.writeLock();
 
     /**
-     * Http client object for frontend server
+     * Http client object for gateway server
      */
     private static final HttpClient client = HttpClient.newHttpClient();
 
     /**
-     * URI for invalidating cache entries at the frontend server
+     * URI for invalidating cache entries at the gateway server
      */
     private static String invalidate_uri;
 
@@ -77,12 +77,12 @@ public class ProductCatalog {
      * @param filePath file path of the inventory of the Products
      * @param dbWriteFreq Frequency to update the inventory into the DB/file
      * @param restockFreq Frequency of item restocking
-     * @param frontendAddress Address of the frontend service for invalidating cache lines
-     * @param isCacheEnabled Indicates whether caching is enabled on the frontend service,
+     * @param gatewayAddress Address of the gateway service for invalidating cache lines
+     * @param isCacheEnabled Indicates whether caching is enabled on the gateway service,
      *                       which determines whether invalidation requests are sent
      * @throws IOException
      */
-    public ProductCatalog(String filePath, int dbWriteFreq, int restockFreq, Address frontendAddress, boolean isCacheEnabled) throws IOException {
+    public ProductCatalog(String filePath, int dbWriteFreq, int restockFreq, Address gatewayAddress, boolean isCacheEnabled) throws IOException {
         productCatalogFileHandler = new CSVFileHandler<>(filePath);
         catalogRecordObjectFactory = new ProductCatalogRecord.ProductCatalogRecordFactory();
         productCatalogFileHandler.readObjectValuesFromCSV(catalogRecordObjectFactory).forEach(
@@ -90,7 +90,7 @@ public class ProductCatalog {
         );
 
         // Define invalidation uri
-        invalidate_uri = "http://" + frontendAddress.toString() + "/invalidate/";
+        invalidate_uri = "http://" + gatewayAddress.toString() + "/invalidate/";
 
         this.isCacheEnabled = isCacheEnabled;
 
@@ -225,7 +225,7 @@ public class ProductCatalog {
         if(!isCacheEnabled) {
             return;
         }
-        // Send invalidation request to frontend
+        // Send invalidation request to gateway
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(invalidate_uri + toyName))
                 .DELETE()

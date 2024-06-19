@@ -1,4 +1,4 @@
-package com.dixon.frontend;
+package com.dixon.gateway;
 
 public class LRUCacheTest {
     public static void main(String args[]) {

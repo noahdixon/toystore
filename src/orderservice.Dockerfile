@@ -2,7 +2,7 @@
 FROM maven:3.8.5-openjdk-17-slim AS buildstage
 COPY catalog-service /home/app/catalog-service
 COPY common-assets /home/app/common-assets
-COPY frontend-service /home/app/frontend-service
+COPY gateway-service /home/app/gateway-service
 COPY order-service /home/app/order-service
 COPY client /home/app/client
 COPY pom.xml /home/app/pom.xml

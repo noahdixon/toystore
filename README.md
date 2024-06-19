@@ -29,10 +29,10 @@ The following technologies are required to be able to run the application:
 
 ## Getting Started
 
-1. Clone the repository and switch into the project directory:
+1. Clone the repository and switch into the project source directory:
    ```sh
    git clone https://github.com/noahdixon/toystore.git
-   cd toystore
+   cd toystore/src
    ```
 
 2. Compile and package the project into JAR files:
@@ -57,13 +57,13 @@ please reference the [Command Line Arguments and Configuration Document](docs/Cm
    docker compose up -d
    ```
 
-3. The Frontend Service is now exposed on port `15623`. To run the client from the same machine, run:
+3. The Gateway Service is now exposed on port `15623`. To run the client from the same machine, run:
    ```sh
-   java -cp "src/client/target/client-1.0-SNAPSHOT.jar" com.dixon.client.Main -p 15623
+   java -cp "client/target/client-1.0-SNAPSHOT.jar" com.dixon.client.Main -p 15623
    ```
    Or from a different machine, run:
    ```sh
-   java -cp "src/client/target/client-1.0-SNAPSHOT.jar" com.dixon.client.Main -s <server address> -p 15623
+   java -cp "client/target/client-1.0-SNAPSHOT.jar" com.dixon.client.Main -s <server address> -p 15623
    ```
    where "host address" specifies the address of the machine where the Docker services are running.
 
@@ -77,7 +77,7 @@ please reference the [Command Line Arguments and Configuration Document](docs/Cm
 
 1. Start the Catalog Service:
    ```sh
-   java -cp "src/catalog-service/target/catalogservice-1.0-SNAPSHOT.jar" com.dixon.catalog.CatalogServiceServer
+   java -cp "catalog-service/target/catalogservice-1.0-SNAPSHOT.jar" com.dixon.catalog.CatalogServiceServer
    ```
 
 
@@ -86,32 +86,32 @@ The default configuration is 3 replicas with ID's 1, 2, and 3.
 Again, this configuration can be changed via the instructions at the bottom of the [Command Line Arguments and Configuration Document](docs/CmdLineArgs.md).
 
    ```sh
-   SELF_ID=1 java -cp "src/order-service/target/orderservice-1.0-SNAPSHOT.jar" com.dixon.order.OrderServiceServer -p 1766 
+   SELF_ID=1 java -cp "order-service/target/orderservice-1.0-SNAPSHOT.jar" com.dixon.order.OrderServiceServer -p 1766 
    ```
    
    ```sh
-   SELF_ID=2 java -cp "src/order-service/target/orderservice-1.0-SNAPSHOT.jar" com.dixon.order.OrderServiceServer -p 1767
+   SELF_ID=2 java -cp "order-service/target/orderservice-1.0-SNAPSHOT.jar" com.dixon.order.OrderServiceServer -p 1767
    ```
    
    ```sh
-   SELF_ID=3 java -cp "src/order-service/target/orderservice-1.0-SNAPSHOT.jar" com.dixon.order.OrderServiceServer -p 1768
+   SELF_ID=3 java -cp "order-service/target/orderservice-1.0-SNAPSHOT.jar" com.dixon.order.OrderServiceServer -p 1768
    ```
 
 
-3. In a separate terminal, start the Frontend Service.
+3. In a separate terminal, start the Gateway Service.
 
    ```sh
-   java -cp "src/frontend-service/target/frontendservice-1.0-SNAPSHOT.jar" com.dixon.frontend.FrontendServiceServer 
+   java -cp "gateway-service/target/gatewayservice-1.0-SNAPSHOT.jar" com.dixon.gateway.GatewayServiceServer 
    ```
 
 
-3. The Frontend Service is now exposed on port `1764`. To run the client from the same machine, in a separate terminal run:
+3. The Gateway Service is now exposed on port `1764`. To run the client from the same machine, in a separate terminal run:
    ```sh
-   java -cp "src/client/target/client-1.0-SNAPSHOT.jar" com.dixon.client.Main -p 1764
+   java -cp "client/target/client-1.0-SNAPSHOT.jar" com.dixon.client.Main -p 1764
    ```
    Or from a different machine, run:
    ```sh
-   java -cp "src/client/target/client-1.0-SNAPSHOT.jar" com.dixon.client.Main -s <server address> -p 1764
+   java -cp "client/target/client-1.0-SNAPSHOT.jar" com.dixon.client.Main -s <server address> -p 1764
    ```
    where "host address" specifies the address of the machine where the Docker services are running.
 

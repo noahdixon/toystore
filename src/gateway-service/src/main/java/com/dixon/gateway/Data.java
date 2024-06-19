@@ -1,4 +1,4 @@
-package com.dixon.frontend;
+package com.dixon.gateway;
 
 import lombok.Builder;
 import lombok.extern.jackson.Jacksonized;

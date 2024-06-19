@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
- * Server that handles buy requests from a frontend server
+ * Server that handles buy requests from a gateway server
  */
 public class OrderServiceServer {
     /**
@@ -265,7 +265,7 @@ public class OrderServiceServer {
         // Decide the file to write orderlog, based on location of the program run
         String orderLogFilePath;
         if(!dockerRun) {
-            orderLogFilePath = cmd.getOptionValue("filePath", "src/order-service/src/main/resources/orderlog_"+ id + ".db");
+            orderLogFilePath = cmd.getOptionValue("filePath", "order-service/src/main/resources/orderlog_"+ id + ".db");
         } else {
             orderLogFilePath = cmd.getOptionValue("filePath", "/data/orderlog_"+ id + ".db");
         }

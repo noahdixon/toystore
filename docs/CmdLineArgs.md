@@ -5,9 +5,9 @@ An explanation for the Order Service replicas' configuration files is also given
 
 ### Client
 
-- `-s <server address>` or `-server <server address>` specifies the hostname of the Frontend Service and defaults to 
+- `-s <server address>` or `-server <server address>` specifies the hostname of the gateway Service and defaults to 
 localhost if not specified.
-- `-p <port number>` or `-port <port number>` specifies the port of the Frontend Service and defaults to 1764 if not specified.
+- `-p <port number>` or `-port <port number>` specifies the port of the gateway Service and defaults to 1764 if not specified.
 - `-r <number>` or `-req <number>` specifies the number of requests to be sent by the Client and defaults to 500 if not specified. 
 This includes product query and product buy requests. For each buy request sent, an additional query order request will be sent
 during the check orders phase.
@@ -23,7 +23,7 @@ under various conditions.
 - `-f` or `-fakeproducts` flag instructs the Client to only query for products that do not exist. This flag is 
 used during testing to check that the application responds properly to query requests for fake products.
 
-### Frontend Service
+### gateway Service
 
 - `-h <host address>` or `-host <host address>` specifies the network interface for the HttpServer, and defaults to
 0.0.0.0 if not specified.
@@ -60,12 +60,12 @@ and defaults to 600 if not specified.
   and defaults to 10 if not specified.
 - `-te` or `-test` flag instructs the service to run in testing mode, meaning it will output information about the data it
   is sending.
-- `-fs <frontend address>` or `-frontendServer <frontend address>` specifies the hostname of the Frontend Service and defaults to
+- `-fs <gateway address>` or `-gatewayServer <gateway address>` specifies the hostname of the gateway Service and defaults to
   localhost if not specified.
-- `-fp <frontend port>` or `-frontendPort <frontend port>` specifies the port of the Frontend Service and defaults to 1764 if not specified.
+- `-fp <gateway port>` or `-gatewayPort <gateway port>` specifies the port of the gateway Service and defaults to 1764 if not specified.
 - `-ec` or `-enableCache` flag enables caching, which instructs the service to send cache invalidation requests 
-to the Frontend Service when stock is changed. This should always be passed if caching is enabled at the Frontend Service
-(if the cache size at the Frontend Service is set larger than 0).
+to the gateway Service when stock is changed. This should always be passed if caching is enabled at the gateway Service
+(if the cache size at the gateway Service is set larger than 0).
 
 ### Order Service
 

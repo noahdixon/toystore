@@ -1,4 +1,4 @@
-package com.dixon.frontend;
+package com.dixon.gateway;
 
 import com.dixon.common.Address;
 import com.dixon.common.OrderServiceNodesReader;
@@ -13,9 +13,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Frontend server that handles query and buy requests from a client
+ * gateway server that handles query and buy requests from a client
  */
-public class FrontendServiceServer {
+public class GatewayServiceServer {
 
     /**
      * Launches the server from the command line.
@@ -103,7 +103,7 @@ public class FrontendServiceServer {
                 60L, TimeUnit.SECONDS, new SynchronousQueue<>()));
 
         // Start server
-        System.out.println("Frontend service started, listening on " + port);
+        System.out.println("gateway service started, listening on " + port);
         server.start();
     }
 }

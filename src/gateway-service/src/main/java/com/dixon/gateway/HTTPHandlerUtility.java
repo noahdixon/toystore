@@ -1,4 +1,4 @@
-package com.dixon.frontend;
+package com.dixon.gateway;
 
 import com.dixon.common.Error;
 import com.dixon.common.ErrorWrapper;

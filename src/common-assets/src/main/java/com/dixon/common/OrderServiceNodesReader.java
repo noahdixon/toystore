@@ -82,7 +82,7 @@ public class OrderServiceNodesReader {
             }
         } else {
             // if not using docker read from ordernodes_local.conf
-            String confFilePath = "src/frontend-service/src/main/resources/ordernodes_local.conf";
+            String confFilePath = "gateway-service/src/main/resources/ordernodes_local.conf";
 
             try (FileInputStream fis = new FileInputStream(confFilePath)) {
                 properties.load(fis);

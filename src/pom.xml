@@ -19,7 +19,7 @@
 
     <modules>
         <module>common-assets</module>
-        <module>frontend-service</module>
+        <module>gateway-service</module>
         <module>catalog-service</module>
         <module>order-service</module>
         <module>client</module>

@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Client that makes query and buy requests to a frontend server
+ * Client that makes query and buy requests to a gateway server
  */
 public class Main {
     /**
@@ -211,7 +211,7 @@ public class Main {
                 }
 
             } catch (ConnectException e) {
-                System.out.println("No response from frontend server. Exiting Gracefully");
+                System.out.println("No response from gateway server. Exiting Gracefully");
                 return;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -255,7 +255,7 @@ public class Main {
                     return;
                 }
             } catch (ConnectException e) {
-                System.out.println("No response from frontend server. Exiting Gracefully");
+                System.out.println("No response from gateway server. Exiting Gracefully");
                 return;
             } catch (Exception e) {
                 e.printStackTrace();
