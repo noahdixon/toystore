@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * gateway server that handles query and buy requests from a client
+ * Gateway server that handles query and buy requests from a client
  */
 public class GatewayServiceServer {
 
@@ -103,7 +103,7 @@ public class GatewayServiceServer {
                 60L, TimeUnit.SECONDS, new SynchronousQueue<>()));
 
         // Start server
-        System.out.println("gateway service started, listening on " + port);
         server.start();
+        System.out.println("Gateway Service started, listening on port " + port);
     }
 }

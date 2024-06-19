@@ -48,7 +48,6 @@ public class CatalogServiceServer {
                         60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>()))
                 .build()
                 .start();
-        System.out.println("Catalog service started, listening on " + port);
 
         // Add shutdown hook for graceful shutdown
         Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -154,6 +153,7 @@ public class CatalogServiceServer {
         // Create and start server
         final CatalogServiceServer server = new CatalogServiceServer();
         server.start(port, maxThreads);
+        System.out.println("Catalog Service started, listening on port " + port);
         server.blockUntilShutdown();
     }
 

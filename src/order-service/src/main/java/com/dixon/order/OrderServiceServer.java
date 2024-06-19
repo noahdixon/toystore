@@ -88,9 +88,10 @@ public class OrderServiceServer {
         replicaManager = new ReplicaManager(id, orderNodeHashMap);
 
         // Sync database with peer nodes
-        new Thread(() -> {
-            syncFromOtherPeers(lastOrderNumber);
-        }).start();
+        syncFromOtherPeers(lastOrderNumber);
+//        new Thread(() -> {
+//            syncFromOtherPeers(lastOrderNumber);
+//        }).start();
     }
 
     /**
@@ -120,6 +121,8 @@ public class OrderServiceServer {
         // no need to sync and return.
         List<OrderNode> activeOrderNodePeers = replicaManager.getActivePeerNodes();
         if (activeOrderNodePeers.isEmpty()) return;
+
+        System.out.println("Syncing order log with other nodes...");
 
         // Get orders from all other nodes after current max order number
         List<NodeAndListenableFuture> ordersDataFutures = activeOrderNodePeers.stream()
@@ -152,13 +155,13 @@ public class OrderServiceServer {
     private FetchAllOrdersResponse getFetchAllOrdersResponseOrEmpty(NodeAndListenableFuture future) {
         try {
             FetchAllOrdersResponse response = future.getFetchAllOrdersFuture().get();
-            System.out.println("Received records " +
-                    response.getOrdersList().size() + " from " +
+            System.out.println("Received " +
+                    response.getOrdersList().size() + " records from peer " +
                     future.getPeerNode().getId());
             return response;
         } catch (Exception e) {
             // Catching the exception
-            System.out.println("Exception while contacting peer " + future.getPeerNode().getId());
+            System.out.println("Peer " + future.getPeerNode().getId() + " appears to be offline");
             replicaManager.changeNodeStatus(future.getPeerNode().getId(), OrderNodeStatus.OFFLINE);
             // Return an empty response
             return FetchAllOrdersResponse.newBuilder().build();
@@ -180,7 +183,6 @@ public class OrderServiceServer {
                         60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>()))
                 .build()
                 .start();
-        System.out.println("Order service started, listening on " + port);
 
         // Add shutdown hook for graceful shutdown
         Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -279,6 +281,7 @@ public class OrderServiceServer {
         // Create and start server
         final OrderServiceServer server = new OrderServiceServer(catalogHost, catalogPort, orderLogFilePath, dockerRun);
         server.start(port, maxThreads);
+        System.out.println("Order Service started, listening on port " + port);
         server.blockUntilShutdown();
     }
 
@@ -417,7 +420,7 @@ public class OrderServiceServer {
                 return future.getAcceptOrdersFuture().get();
             } catch (Exception e) {
                 // Catching the exception
-                System.out.println("Exception while contacting peer " + future.getPeerNode().getId());
+                System.out.println("Peer " + future.getPeerNode().getId() + " appears to be offline");
                 replicaManager.changeNodeStatus(future.getPeerNode().getId(), OrderNodeStatus.OFFLINE);
 
                 // Return an empty response
@@ -490,7 +493,7 @@ public class OrderServiceServer {
         public void fetchAllOrdersFrom(FetchAllOrdersFromRequest req,
                                        StreamObserver<FetchAllOrdersResponse> responseObserver) {
 
-            System.out.println("Received all orders request from " + req.getRequesterId());
+            System.out.print("Peer " + req.getRequesterId() + " is asking to sync order logs, ");
 
             // Make the node active if a fetch request is received from a node
             replicaManager.changeNodeStatus(req.getRequesterId(), OrderNodeStatus.ACTIVE);
@@ -505,7 +508,7 @@ public class OrderServiceServer {
                     .setAfterOrderNumber(req.getAfterOrderNumber())
                     .build();
 
-            System.out.println("Sent out " + orderRecords.size() + " Records");
+            System.out.println("sending " + orderRecords.size() + " records to peer " + req.getRequesterId());
             // Optionally print response object
             if (testMode) {
                 System.out.println("Order record objects contained in fetch all orders from response object:");

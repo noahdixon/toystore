@@ -16,15 +16,15 @@ textual and graphical solution overviews, and detailed specifics of the implemen
 ## Requirements
 
 The following technologies are required to be able to run the application:
-1. **Java Development Kit (JDK) 17 or higher**: Installation instructions can be found
+- **Java Development Kit (JDK) 17 or higher**: Installation instructions can be found
    [here](https://docs.oracle.com/en/java/javase/21/install/overview-jdk-installation.html).
 
 
-2. **Apache Maven**: Installation instructions can be found
+- **Apache Maven**: Installation instructions can be found
    [here](https://maven.apache.org/install.html).
 
 
-3. **Docker** (Optional): Installation instructions can be found
+- **Docker** (Optional): Installation instructions can be found
    [here](https://docs.docker.com/get-docker/).
 
 ## Getting Started
@@ -105,7 +105,7 @@ Again, this configuration can be changed via the instructions at the bottom of t
    ```
 
 
-3. The Gateway Service is now exposed on port `1764`. To run the client from the same machine, in a separate terminal run:
+4. The Gateway Service is now exposed on port `1764`. To run the client from the same machine, in a separate terminal run:
    ```sh
    java -cp "client/target/client-1.0-SNAPSHOT.jar" com.dixon.client.Main -p 1764
    ```
@@ -115,8 +115,28 @@ Again, this configuration can be changed via the instructions at the bottom of t
    ```
    where "host address" specifies the address of the machine where the Docker services are running.
 
-4. To stop each microservices and close down the application, simply enter control-C in the
+5. To stop each microservices and close down the application, simply enter control-C in the
 terminal for each service:
    ```shell
    ^C
    ```
+   
+## Acknowledgements
+1. Followed https://github.com/grpc/grpc-java for pom.xml changes to enable gRPC to be built using maven.
+
+
+2. Followed https://github.com/grpc/grpc-java/issues/10826 to fix the issues of dependent classes not being available.
+   Also used the same resource to decide on the packaging plugin of maven shade to construct single jar with all dependencies.
+
+
+3. Followed https://www.tutorialspoint.com/commons_cli/commons_cli_quick_guide.htm to read the command line arguments from CLI.
+
+
+4. Followed https://www.baeldung.com/java-csv-file-array#buff-reader to read the csv file as buffer reader.
+
+
+5. Read this https://stackoverflow.com/questions/27767264/how-to-dockerize-maven-project-and-how-many-ways-to-accomplish-it
+   and https://stackoverflow.com/questions/56438864/dockerize-a-multi-maven-project-not-multi-module for containerization help.
+
+
+6. Followed https://www.baeldung.com/java-lru-cache for inspiration on LRUCache design.

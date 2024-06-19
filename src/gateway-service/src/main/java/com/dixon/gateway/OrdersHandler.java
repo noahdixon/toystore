@@ -309,7 +309,7 @@ public class OrdersHandler implements HttpHandler {
         if (currentOrderServiceId != offlineLeaderId) {
             return;
         }
-        System.out.println("Electing a new leader with current leader id " + offlineLeaderId);
+        System.out.println("Electing a new leader Order Service...");
 
         HealthRequest req = HealthRequest.newBuilder().setMessage("Are you online?").build();
 
@@ -341,7 +341,7 @@ public class OrdersHandler implements HttpHandler {
         orderStub = stub;
         currentOrderServiceId = orderIds[idIndex];
 
-        System.out.println("Elected a new leader id - " + orderIds[idIndex]);
+        System.out.println("Elected a new leader Order Service with id " + orderIds[idIndex]);
 
         // Create leader assignment
         LeaderAssignment assignment = LeaderAssignment.newBuilder()
