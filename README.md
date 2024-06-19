@@ -17,11 +17,11 @@ textual and graphical solution overviews, and detailed specifics of the implemen
 
 The following technologies are required to be able to run the application:
 1. **Java Development Kit (JDK) 17 or higher**: Installation instructions can be found
-[here](https://docs.oracle.com/en/java/javase/21/install/overview-jdk-installation.html).
+   [here](https://docs.oracle.com/en/java/javase/21/install/overview-jdk-installation.html).
 
 
 2. **Apache Maven**: Installation instructions can be found
-[here](https://maven.apache.org/install.html).
+   [here](https://maven.apache.org/install.html).
 
 
 3. **Docker** (Optional): Installation instructions can be found
@@ -29,16 +29,23 @@ The following technologies are required to be able to run the application:
 
 ## Getting Started
 
-1. Clone the repository and switch to the source directory:
+1. Clone the repository and switch into the project directory:
    ```sh
    git clone https://github.com/noahdixon/toystore.git
-   cd toystore/src
+   cd toystore
    ```
 
 2. Compile and package the project into JAR files:
    ```sh
    mvn clean install
    ```
+
+The application can now be run by either starting the microservices via Docker Compose,
+or starting each service manually from the command line. In both cases the application will be 
+run with a default configuration. This configuration specifies 3 Order Service replicas,
+enables caching with a cache size of 7, and sets several other parameters to default values. 
+In order to learn about the parameters for each service and the Client and how they can be changed,
+please reference the [Command Line Arguments and Configuration Document](docs/CmdLineArgs.md).
 
 ### Run Using Docker Compose
 1. Ensure that docker is running on your machine.
@@ -49,34 +56,16 @@ The following technologies are required to be able to run the application:
    ```sh
    docker compose up -d
    ```
-   A few notes on this:
-   - The default docker-compose.yml
-and ordernodes.conf files specify 3 Order Service replicas, and these files can be
-modified to add more replicas per the instructions at the bottom of the 
-[Command Line Arguments and Configuration Document](docs/CmdLineArgs.md).
-
-   - The default LRU cache size is 7 and is defined on 
-[line 16](https://github.com/noahdixon/toystore/blob/812391cbb53ecbf9850ddfea2eef49dbd6c29882/src/frontend.Dockerfile#L16)
-of the [`frontend.Dockerfile`](src/frontend.Dockerfile). This value can be changed
-to change the size of the cache. If it is set to 0, caching should also be disabled in the Catalog Service by
-removing the -ec argument on [line 17](https://github.com/noahdixon/toystore/blob/812391cbb53ecbf9850ddfea2eef49dbd6c29882/src/catalogservice.Dockerfile#L17)
-of the [`catalogservice.Dockerfile`](src/catalogservice.Dockerfile), or commenting out
-[line 17](https://github.com/noahdixon/toystore/blob/812391cbb53ecbf9850ddfea2eef49dbd6c29882/src/catalogservice.Dockerfile#L17)
-and uncommenting
-[line 20]().
-
 
 3. The Frontend Service is now exposed on port `15623`. To run the client from the same machine, run:
    ```sh
-   java -cp "./client/target/client-1.0-SNAPSHOT.jar" com.dixon.client.Main -p 15623
+   java -cp "src/client/target/client-1.0-SNAPSHOT.jar" com.dixon.client.Main -p 15623
    ```
    Or from a different machine, run:
    ```sh
-   java -cp "./client/target/client-1.0-SNAPSHOT.jar" com.dixon.client.Main -s <server address> -p 15623
+   java -cp "src/client/target/client-1.0-SNAPSHOT.jar" com.dixon.client.Main -s <server address> -p 15623
    ```
-   where "host address" specifies the address of the machine where the Docker services are running. These commands
-   will runt the client in a default configuration which can be changed using several command line arguments specified
-   in the [Command Line Arguments and Configuration Document](docs/CmdLineArgs.md).
+   where "host address" specifies the address of the machine where the Docker services are running.
 
 
 4. To stop all microservices and close down the application, run:
@@ -86,11 +75,48 @@ and uncommenting
 
 ### Run Without Docker
 
-1. The commands listed below will start each microservice from the command line with a default configuration. In
-order to change the configuration of any microservice, please reference the [Command Line Arguments and Configuration Document](docs/CmdLineArgs.md).
+1. Start the Catalog Service:
+   ```sh
+   java -cp "src/catalog-service/target/catalogservice-1.0-SNAPSHOT.jar" com.dixon.catalog.CatalogServiceServer
+   ```
 
-2. Start the Catalog Service:
-```sh
-java -cp "./catalog-service/target/catalogservice-1.0-SNAPSHOT.jar" com.dixon.catalog.CatalogServiceServer
 
-```
+2. In separate terminals, start the Order Service replicas. 
+The default configuration is 3 replicas with ID's 1, 2, and 3. 
+Again, this configuration can be changed via the instructions at the bottom of the [Command Line Arguments and Configuration Document](docs/CmdLineArgs.md).
+
+   ```sh
+   SELF_ID=1 java -cp "src/order-service/target/orderservice-1.0-SNAPSHOT.jar" com.dixon.order.OrderServiceServer -p 1766 
+   ```
+   
+   ```sh
+   SELF_ID=2 java -cp "src/order-service/target/orderservice-1.0-SNAPSHOT.jar" com.dixon.order.OrderServiceServer -p 1767
+   ```
+   
+   ```sh
+   SELF_ID=3 java -cp "src/order-service/target/orderservice-1.0-SNAPSHOT.jar" com.dixon.order.OrderServiceServer -p 1768
+   ```
+
+
+3. In a separate terminal, start the Frontend Service.
+
+   ```sh
+   java -cp "src/frontend-service/target/frontendservice-1.0-SNAPSHOT.jar" com.dixon.frontend.FrontendServiceServer 
+   ```
+
+
+3. The Frontend Service is now exposed on port `1764`. To run the client from the same machine, in a separate terminal run:
+   ```sh
+   java -cp "src/client/target/client-1.0-SNAPSHOT.jar" com.dixon.client.Main -p 1764
+   ```
+   Or from a different machine, run:
+   ```sh
+   java -cp "src/client/target/client-1.0-SNAPSHOT.jar" com.dixon.client.Main -s <server address> -p 1764
+   ```
+   where "host address" specifies the address of the machine where the Docker services are running.
+
+4. To stop each microservices and close down the application, simply enter control-C in the
+terminal for each service:
+   ```shell
+   ^C
+   ```
