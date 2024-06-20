@@ -35,7 +35,7 @@ rm -rf "$out_directory"
 mkdir -p "$out_directory"
 
 # Start clients sequentially for each probability number
-for ((clients=1; clients<=5; clients++)); do
+for ((clients=1; clients<=10; clients++)); do
 
     # Create the folder with inside the 'out' directory
     output_folder="$out_directory/clients_${clients}"
@@ -45,7 +45,7 @@ for ((clients=1; clients<=5; clients++)); do
     echo "Running $clients concurrent clients"
 
     for ((client_i=1; client_i<=clients; client_i++)); do
-        java -cp "./client/target/client-1.0-SNAPSHOT.jar" com.dixon.client.Main ${server_address:+-ser "$server_address"} ${port:+-p "$port"} ${req:+-req "$req"}  -pr 1 -l > "$output_folder"/latencies_${client_i}.txt &
+        java -cp "client/target/client-1.0-SNAPSHOT.jar" com.dixon.client.Main ${server_address:+-ser "$server_address"} ${port:+-p "$port"} ${req:+-req "$req"}  -pr 1 -l > "$output_folder"/latencies_${client_i}.txt &
     done
 
     # Wait for background processes to complete in this for loop
