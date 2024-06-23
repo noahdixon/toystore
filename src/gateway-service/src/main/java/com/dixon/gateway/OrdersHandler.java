@@ -340,6 +340,7 @@ public class OrdersHandler implements HttpHandler {
 
         orderStub = stub;
         currentOrderServiceId = orderIds[idIndex];
+        int newLeaderIndex = idIndex;
 
         System.out.println("Elected a new leader Order Service with id " + orderIds[idIndex]);
 
@@ -354,6 +355,10 @@ public class OrdersHandler implements HttpHandler {
         while (idIndex < totalIds) {
             try {
                 LeaderAssignmentResponse response = stub.assignLeader(assignment);
+                if (idIndex > newLeaderIndex) {
+                    // close channel after sending
+                    ((ManagedChannel) stub.getChannel()).shutdown();
+                }
             } catch (StatusRuntimeException e) {}
             idIndex++;
             if (idIndex < totalIds) {

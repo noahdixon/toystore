@@ -96,7 +96,7 @@ public class Main {
 
         // Set products to fake if f argument passed
         if (cmd.hasOption("f")) {
-            products = new String[]{"Fake", "Fake", "Fake", "Fake", "Fake", "Fake"};
+            products = new String[]{"Fake", "Fake", "Fake", "Fake", "Fake", "Fake", "Fake", "Fake", "Fake", "Fake"};
         }
 
         // Create custom printer for ignoring printing during latency tests
@@ -119,7 +119,7 @@ public class Main {
         List<SentOrder> sentOrders = new LinkedList<>();
 
         // Sequentially issue requests
-        Data data = null;
+        Data data = Data.builder().quantity(1).build();
         int remainingReq = numOfReq;
         Random random = new Random();
         HttpResponse<String> response;

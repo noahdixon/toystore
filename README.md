@@ -45,7 +45,7 @@ or starting each service manually from the command line. In both cases the appli
 run with a default configuration. This configuration specifies 3 Order Service replicas,
 enables caching with a cache size of 7, and sets several other parameters to default values. 
 In order to learn about the parameters for each service and the Client and how they can be changed,
-please reference the [Command Line Arguments and Configuration Document](docs/CmdLineArgs.md).
+please reference the [Command Line Arguments and Configuration Document](docs/ConfigurationDoc.md).
 
 ### Run Using Docker Compose
 1. Ensure that docker is running on your machine.
@@ -77,13 +77,13 @@ please reference the [Command Line Arguments and Configuration Document](docs/Cm
 
 1. Start the Catalog Service:
    ```sh
-   java -cp "catalog-service/target/catalogservice-1.0-SNAPSHOT.jar" com.dixon.catalog.CatalogServiceServer
+   java -cp "catalog-service/target/catalogservice-1.0-SNAPSHOT.jar" com.dixon.catalog.CatalogServiceServer -ec
    ```
 
 
 2. In separate terminals, start the Order Service replicas. 
 The default configuration is 3 replicas with ID's 1, 2, and 3. 
-Again, this configuration can be changed via the instructions at the bottom of the [Command Line Arguments and Configuration Document](docs/CmdLineArgs.md).
+Again, this configuration can be changed via the instructions at the bottom of the [Command Line Arguments and Configuration Document](docs/ConfigurationDoc.md).
 
    ```sh
    SELF_ID=1 java -cp "order-service/target/orderservice-1.0-SNAPSHOT.jar" com.dixon.order.OrderServiceServer -p 1766 
@@ -101,7 +101,7 @@ Again, this configuration can be changed via the instructions at the bottom of t
 3. In a separate terminal, start the Gateway Service.
 
    ```sh
-   java -cp "gateway-service/target/gatewayservice-1.0-SNAPSHOT.jar" com.dixon.gateway.GatewayServiceServer 
+   java -cp "gateway-service/target/gatewayservice-1.0-SNAPSHOT.jar" com.dixon.gateway.GatewayServiceServer -cs 7
    ```
 
 
@@ -115,7 +115,8 @@ Again, this configuration can be changed via the instructions at the bottom of t
    ```
    where "host address" specifies the address of the machine where the Docker services are running.
 
-5. To stop each microservices and close down the application, simply enter control-C in the
+
+5. To stop each microservice and close down the application, simply enter control-C in the
 terminal for each service:
    ```shell
    ^C

@@ -1,41 +1,27 @@
-# Multi-Tiered, Microservice-Based Toy StoreFault Tolerant Tiered Microservices-Based Toy Store
+# Microservice-Based Toy Store
 
 ## Introduction
 
-This project implements a web application backend for a fictional
+This project implements a web application backend for a fictional online
 toy store using a multi-tier architecture 
 with containerized microservices that communicate via gRPC. It also includes a simulated 
 client program that sends requests to the backend via an HTTP-based REST API.
-Load test are performed to examine the latency impacts of caching.
+Load test are performed by running concurrent simulated clients via a bash script
+to examine the latency impacts of increasing users.
 
 ## Goals and objectives
 
 1. Design a distributed server application using a multi-tier architecture and 
 containerized microservices. 
 
-
-2. Replicate one of the microservices to provide fault tolerance for that service.
-
-
-3. Implement a custom cache on the server to improve request latency.
+   
+2. Implement a custom cache to improve request latency and reduce microservice communication overhead.
 
 
-4. Explore performance affects of caching.
-
-## Statement of scope
-
-1. Implement an online toy store backend as a multi-tier application using caching
-and replication for fault tolerance.
+3. Replicate one of the microservices to provide fault tolerance for that service.
 
 
-2. Implement a client code to simulate clients sending HTTP requests to the store.
-
-
-3. Containerize the application using Docker for distributed deployment.
-
-
-4. Perform loads tests to measure performance changes with and without caching, 
-and with increasing users.
+4. Explore performance impacts of increasing users.
 
 ## Solution Overview
 
@@ -207,7 +193,7 @@ has become invalid.
 
 Each of these methods is synchronized to avoid race conditions since the cache is shared across 
 concurrently executing handler threads. The cache can also be enabled or disabled on startup 
-of the Gateway Service using a command line argument.
+of the Gateway Service using the -cs command line argument.
 
 #### Leader Election
 
@@ -362,11 +348,12 @@ and produce plots showing the average latency per request for both query and buy
 
 ## Build Tools and Packaging
 
-Maven is used as a build, packaging, and dependency manager. The project is set up with _____ as a 
-parent pom and the three microservices (Gateway, Catalog and Order Service) and Client as child pom modules. 
-Maven build compiles and packages all child modules first for the parent, and then packages into the Jar.
-The maven shade plugin is used to package the dependencies into a single fat jar so that the classpath does not 
-have to contain all the required dependencies. We used apache commons cli for command line arguments and gRPC 
+Maven is used as a build, packaging, and dependency manager. The project is set up with Toystore as a 
+parent pom and the three microservices (Gateway, Catalog and Order Service) and the Client as child pom modules. 
+Maven build compiles and packages all child modules first for the parent, and then packages them into the Jar.
+The Maven Shade Plugin is used to package the dependencies into a single fat jar so that the classpath does not 
+have to contain all the required dependencies. This plugin along with
+Apache Commons CLI (for reading command line arguments) and gRPC are used
 as dependencies for the project. The Jar will be able to run with minimum of JRE 11.
 
 ## Containerization
@@ -391,23 +378,3 @@ instances). Dependencies ensure that the services start in the correct order (Ca
 then Gateway Service). The Catalog and Order Services share the host machines' `/data` directory for storing the
 inventory.csv and order log database files.
 The Gateway service is exposed on the host machine's port 15623 for receiving client requests.
-
-## References Used
-1. Followed https://github.com/grpc/grpc-java for pom.xml changes to enable gRPC to be built using maven.
-
-
-2. Followed https://github.com/grpc/grpc-java/issues/10826 to fix the issues of dependent classes not being available.
-   Also used the same resource to decide on the packaging plugin of maven shade to construct single jar with all dependencies.
-
-
-3. Followed https://www.tutorialspoint.com/commons_cli/commons_cli_quick_guide.htm to read the command line arguments from CLI.
-
- 
-4. Followed https://www.baeldung.com/java-csv-file-array#buff-reader to read the csv file as buffer reader.
-
- 
-5. Read this https://stackoverflow.com/questions/27767264/how-to-dockerize-maven-project-and-how-many-ways-to-accomplish-it 
-and https://stackoverflow.com/questions/56438864/dockerize-a-multi-maven-project-not-multi-module for containerization help.
-
- 
-6. Followed https://www.baeldung.com/java-lru-cache for inspiration on LRUCache design.
