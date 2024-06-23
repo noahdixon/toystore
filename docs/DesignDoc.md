@@ -1,5 +1,26 @@
 # Microservice-Based Toy Store
 
+## Table of Contents
+- [Introduction](#introduction)
+- [Goals and Objectives](#goals-and-objectives)
+- [Solution Overview](#solution-overview)
+   - [Client Perspective](#client-perspective)
+   - [Solution Structure](#solution-structure)
+- [Technologies](#technologies)
+- [Design Details](#design-details)
+   - [Gateway Service](#gateway-service)
+     - [LRU Cache](#lru-cache)
+   - [Leader Election](#leader-election)
+   - [Catalog Service](#catalog-service)
+   - [Order Service](#order-service)
+      - [Replication](#replication)
+- [Client](#client)
+- [Testing](#testing)
+- [Build Tools and Packaging](#build-tools-and-packaging)
+- [Containerization](#containerization)
+   - [Docker Image Build](#docker-image-build)
+   - [Docker Compose](#docker-compose)
+
 ## Introduction
 
 This project implements a web application backend for a fictional online
@@ -329,22 +350,8 @@ and terminates.
 
 ## Testing
 
-
-### Latency Testing
-
-In order to examine the latency effects of increasing client loads, 
-
-Java's
-System.nanoTime method is used to capture the time in nanoseconds immediately before and after 
-client requests are made to the Gateway server. The time for all requests is averaged and optionally
-printed to the standard output in milliseconds at the end of each client run. The run_latencies.sh file is 
-used to run multiple concurrent client processes. The file accepts command 
-line arguments for which part to run, the server host name, server port number, number of requests per client
-and the number of clients to run concurrently. If 5 clients are specified, the script  
-runs 5 clients concurrently (15 clients total), and outputs the average 
-latency for each of the clients to folders in the out directory. Then, running the python 
-files in the python_graph directory will read the appropriate data from the out directory, 
-and produce plots showing the average latency per request for both query and buy requests.
+The application is tested for functional correctness and evaluated for performance under load. The
+[Testing and Evaluation Document](TestDoc.md) details the test cases and results used for this anlysis.
 
 ## Build Tools and Packaging
 

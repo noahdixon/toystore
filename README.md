@@ -2,6 +2,14 @@
 
 #### A multi-tiered, microservice-based backend application for an online toy store.
 
+## Table of Contents
+- [Overview](#overview)
+- [Requirements](#requirements)
+- [Getting Started](#getting-started)
+  - [Run Using Docker Compose](#run-using-docker-compose)
+  - [Run Without Docker](#run-without-docker)
+- [Acknowledgements](#acknowledgements)
+
 ## Overview
 This project implements a web application backend for a fictional online
 toy store using a multi-tier architecture
@@ -11,7 +19,9 @@ The project includes a simulated client program that issues sequential requests 
 store via an HTTP-based REST API. A bash script is also included that is used to start multiple client processes
 concurrently to examine latency impacts under increasing client load. A highly detailed description of the application
 can be found in the [Design Document](docs/DesignDoc.md). This includes the high level objectives, 
-textual and graphical solution overviews, and detailed specifics of the implementation.
+textual and graphical solution overviews, and detailed specifics of the implementation. The test cases used to verify
+the application's functional correctness and examine its performance under increasing load are detailed in the
+[Testing and Evaluation Document](TestDoc.md). Instructions for running the application are outlined below.
 
 ## Requirements
 

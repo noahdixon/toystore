@@ -1,5 +1,10 @@
 # Testing and Evaluation
 
+## Table of Contents
+- [Functional Testing](#functional-testing)
+- [LRU Cache Testing](#lru-cache-testing)
+- [Latency Performance Evaluation](#latency-performance-evaluation)
+
 ## Functional Testing
 
 The following test cases are used to verify that the application works as expected.
